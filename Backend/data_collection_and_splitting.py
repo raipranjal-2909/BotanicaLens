@@ -6,7 +6,7 @@ from tensorflow.keras.preprocessing import image_dataset_from_directory
 
 # Collecting Dataset from Path
 dataset = image_dataset_from_directory(
-    r"D:\BotanicaLens\archive",   # <- Use raw string
+    r"D:\BotanicaLens\dataset",   # <- Use raw string
     shuffle=False,                # <- No shuffle here
     batch_size=16,
     image_size=(299, 299),
