@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import './App.css';
+import { useState, useRef } from "react";
+import "./App.css";
 
 export default function BotanicalensApp() {
   const [file, setFile] = useState(null);
@@ -22,7 +22,7 @@ export default function BotanicalensApp() {
       };
       reader.readAsDataURL(selectedFile);
     } else if (selectedFile) {
-      setError('Invalid file type. Please upload a JPEG, JPG or PNG image.');
+      setError("Invalid file type. Please upload a JPEG, JPG or PNG image.");
       setFile(null);
       setPreview(null);
     }
@@ -54,28 +54,28 @@ export default function BotanicalensApp() {
   const handleSubmit = () => {
     if (file) {
       const formData = new FormData();
-      formData.append('image', file);
-  
-      fetch('http://127.0.0.1:5000/predict', {
-        method: 'POST',
-        body: formData
+      formData.append("image", file);
+
+      fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        body: formData,
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log("Prediction response:", data);
-        if (data.class) {
-          setResult(data);         // ✅ store result
-          setIsSubmitted(true);    // ✅ show result UI
-        } else {
-          setError(data.error || "No prediction returned.");
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        setError('Prediction failed. Try again.');
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Prediction response:", data);
+          if (data.class) {
+            setResult(data); // ✅ store result
+            setIsSubmitted(true); // ✅ show result UI
+          } else {
+            setError(data.error || "No prediction returned.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          setError("Prediction failed. Try again.");
+        });
     } else {
-      setError('Please select a file first.');
+      setError("Please select a file first.");
     }
   };
 
@@ -92,19 +92,31 @@ export default function BotanicalensApp() {
       <nav className="w-full bg-green-900 p-4 flex justify-between items-center">
         <div className="text-white font-bold text-xl md:text-2xl flex items-center">
           <span className="underline font-serif">Botanicalens</span>
-          <i className="fa-solid fa-magnifying-glass fa-flip-horizontal ml-2" style={{ color: "#ffffff" }}></i>
+          <i
+            className="fa-solid fa-magnifying-glass fa-flip-horizontal ml-2"
+            style={{ color: "#ffffff" }}
+          ></i>
         </div>
         <div className="flex gap-4">
-          <a href="#" className="text-white hover:text-green-200">Home</a>
-          <a href="#" className="text-white hover:text-green-200">Resources</a>
-          <a href="#" className="text-white hover:text-green-200">About</a>
+          <a href="#" className="text-white hover:text-green-200">
+            Home
+          </a>
+          <a href="#" className="text-white hover:text-green-200">
+            Resources
+          </a>
+          <a href="#" className="text-white hover:text-green-200">
+            About
+          </a>
         </div>
       </nav>
 
       <div className="flex-1 flex flex-col items-center justify-center w-full px-4 py-8">
         <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold text-white mb-8 font-serif text-center">
           <u>Botanicalens</u>
-          <i className="fa-solid fa-magnifying-glass fa-flip-horizontal ml-2" style={{ color: "#ffffff" }}></i>
+          <i
+            className="fa-solid fa-magnifying-glass fa-flip-horizontal ml-2"
+            style={{ color: "#ffffff" }}
+          ></i>
         </h1>
 
         {isSubmitted && result ? (
@@ -112,46 +124,95 @@ export default function BotanicalensApp() {
             <div className="text-green-700 mb-4">
               <i className="fa-solid fa-circle-check text-5xl"></i>
             </div>
-            <h2 className="text-2xl font-bold text-green-700 mb-2">Prediction Result</h2>
-            <p className="text-gray-700 mb-2">Class: <strong>{result.class}</strong></p>
-            <p className="text-gray-700 mb-6">Confidence: <strong>{result.confidence}%</strong></p>
-            <button onClick={handleReset} className="bg-green-700 text-white px-6 py-2 rounded-md hover:bg-green-800 transition duration-300">
+            <h2 className="text-2xl font-bold text-green-700 mb-2">
+              Prediction Result
+            </h2>
+            <p className="text-gray-700 mb-2">
+              Class: <strong>{result.class}</strong>
+            </p>
+            <p className="text-gray-700 mb-6">
+              Confidence: <strong>{result.confidence}%</strong>
+            </p>
+            {result.benefit && (
+              <p className="text-green-700 italic mb-6">
+                🌿 <strong>Medicinal Benefit:</strong> {result.benefit}
+              </p>
+            )}
+
+            <button
+              onClick={handleReset}
+              className="bg-green-700 text-white px-6 py-2 rounded-md hover:bg-green-800 transition duration-300"
+            >
               Upload Another
             </button>
           </div>
         ) : (
           <>
-            <div 
-              className={`border-2 ${isDragging ? 'border-solid' : 'border-dashed'} border-white rounded-lg w-full max-w-4xl mx-auto aspect-video flex flex-col items-center justify-center ${preview ? 'p-0 overflow-hidden' : 'p-8'}`}
+            <div
+              className={`border-2 ${
+                isDragging ? "border-solid" : "border-dashed"
+              } border-white rounded-lg w-full max-w-4xl mx-auto aspect-video flex flex-col items-center justify-center ${
+                preview ? "p-0 overflow-hidden" : "p-8"
+              }`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
               {preview ? (
-                <img src={preview} alt="Preview" className="w-full h-full object-cover rounded-lg" />
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-full h-full object-cover rounded-lg"
+                />
               ) : (
                 <>
                   <i className="fa-solid fa-cloud-arrow-up text-white text-4xl md:text-6xl mb-4"></i>
                   <h2 className="text-xl md:text-2xl font-medium text-white mb-2 text-center">
-                    {isDragging ? 'Release to Upload File' : 'Drag & Drop to Upload File'}
+                    {isDragging
+                      ? "Release to Upload File"
+                      : "Drag & Drop to Upload File"}
                   </h2>
                   <p className="text-lg md:text-xl text-white mb-4">OR</p>
-                  <button onClick={handleBrowseClick} className="bg-white text-green-700 px-6 py-2 rounded-md hover:bg-gray-100 transition duration-300">
+                  <button
+                    onClick={handleBrowseClick}
+                    className="bg-white text-green-700 px-6 py-2 rounded-md hover:bg-gray-100 transition duration-300"
+                  >
                     Browse File
                   </button>
-                  <input type="file" ref={fileInputRef} className="hidden" onChange={handleInputChange} accept=".jpg,.jpeg,.png" />
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={handleInputChange}
+                    accept=".jpg,.jpeg,.png"
+                  />
                 </>
               )}
             </div>
 
-            {error && <div className="mt-4 text-red-400 text-center"><p>{error}</p></div>}
+            {error && (
+              <div className="mt-4 text-red-400 text-center">
+                <p>{error}</p>
+              </div>
+            )}
 
             <div className="mt-6 flex justify-center">
-              <button onClick={handleSubmit} className={`px-6 py-2 rounded-md transition duration-300 ${file ? 'bg-white text-green-700 hover:bg-gray-100' : 'bg-gray-400 text-gray-700 cursor-not-allowed'}`} disabled={!file}>
+              <button
+                onClick={handleSubmit}
+                className={`px-6 py-2 rounded-md transition duration-300 ${
+                  file
+                    ? "bg-white text-green-700 hover:bg-gray-100"
+                    : "bg-gray-400 text-gray-700 cursor-not-allowed"
+                }`}
+                disabled={!file}
+              >
                 Submit
               </button>
               {file && (
-                <button onClick={handleReset} className="ml-4 px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300">
+                <button
+                  onClick={handleReset}
+                  className="ml-4 px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+                >
                   Cancel
                 </button>
               )}

@@ -22,6 +22,15 @@ class_names = ['Aloevera','Amla','Amruthaballi','Arali','Astma_weed','Badipala',
                'Pea','Pepper','Pomoegranate','Pumpkin','Raddish','Rose','Sampige','Sapota','Seethaashoka','Seethapala',
                'Spinach1','Tamarind','Taro','Tecoma','Thumbe','Tomato','Tulsi','Turmeric','ashoka','camphor','kamakasturi','kepala']
 
+plant_benefits = {
+    "Neem": "Treats skin disorders, boosts immunity, has anti-bacterial and anti-inflammatory properties.",
+    "Tulsi": "Relieves cold, cough, and sore throat; helps in digestion and reducing stress.",
+    "Amla": "Rich in Vitamin C, boosts immunity, good for digestion and skin.",
+    "Aloevera": "Soothes skin, aids digestion, and helps in healing wounds.",
+    "Turmeric": "Anti-inflammatory, antiseptic, improves liver health.",
+}
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     filepath = 'temp.jpg'
@@ -51,9 +60,11 @@ def predict():
         predicted_class = int(np.argmax(predictions[0]))
         confidence = float(np.max(predictions[0])) * 100
 
+        plant_name = class_names[predicted_class]
         result = {
-            'class': class_names[predicted_class],
-            'confidence': round(confidence, 2)
+            'class': plant_name,
+            'confidence': round(confidence, 2),
+            'benefit': plant_benefits.get(plant_name, "Benefit information not available.")
         }
 
     except Exception as e:
