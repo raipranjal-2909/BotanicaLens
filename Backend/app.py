@@ -24,6 +24,8 @@ class_names = ['Aloevera','Amla','Amruthaballi','Arali','Astma_weed','Badipala',
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    filepath = 'temp.jpg'
+
     if 'image' not in request.files:
         return jsonify({'error': 'No image uploaded'}), 400
 
@@ -31,18 +33,22 @@ def predict():
     if file.filename == '':
         return jsonify({'error': 'No image selected'}), 400
 
-    filepath = 'temp.jpg'
-    file.save(filepath)
-
     try:
-        # Preprocess image
-        image = load_img(filepath, target_size=(224, 224))
+        # Save uploaded file
+        file.save(filepath)
+
+        # Load and preprocess image
+        image = load_img(filepath, target_size=(299, 299))
         image_array = img_to_array(image)
         image_array = expand_dims(image_array, axis=0)
 
-        # Prediction
+        # Predict using model
         predictions = model.predict(image_array)
-        predicted_class = np.argmax(predictions[0])
+
+        if predictions.shape[0] == 0:
+            raise ValueError("Prediction failed, no output returned.")
+
+        predicted_class = int(np.argmax(predictions[0]))
         confidence = float(np.max(predictions[0])) * 100
 
         result = {
@@ -51,11 +57,15 @@ def predict():
         }
 
     except Exception as e:
-        result = {'error': str(e)}
+        result = {'error': f'Prediction error: {str(e)}'}
+
     finally:
-        os.remove(filepath)
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
     return jsonify(result)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

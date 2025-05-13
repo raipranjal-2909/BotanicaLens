@@ -55,19 +55,24 @@ export default function BotanicalensApp() {
     if (file) {
       const formData = new FormData();
       formData.append('image', file);
-
+  
       fetch('http://127.0.0.1:5000/predict', {
         method: 'POST',
         body: formData
       })
       .then(response => response.json())
       .then(data => {
-        setResult(data);
-        setIsSubmitted(true);
+        console.log("Prediction response:", data);
+        if (data.class) {
+          setResult(data);         // ✅ store result
+          setIsSubmitted(true);    // ✅ show result UI
+        } else {
+          setError(data.error || "No prediction returned.");
+        }
       })
       .catch(error => {
         console.error('Error:', error);
-        setError('An error occurred while processing your image. Please try again.');
+        setError('Prediction failed. Try again.');
       });
     } else {
       setError('Please select a file first.');
